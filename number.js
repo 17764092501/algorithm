@@ -40,3 +40,41 @@ var isPalindrome = function (x) {
   return true;
 };
 console.log(isPalindrome(123321123321))
+
+/**
+ * 罗马数字转阿拉伯数字
+ * @param {string} s
+ * @return {number}
+ */
+var romanToInt = function(s) {
+  // 对应规则
+  let hashNum = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000
+  }
+  let result = 0;
+  for (let index = 0; index < s.length; index++) {
+    const num = hashNum[s[index]];
+    const nextNum = hashNum[s[index+1]];
+    if(!num){
+      return "输入字符串不合规";
+    }
+    // 下一个数大于当前数 result减去当前数
+    if(nextNum > num){
+      result -= num;
+    } else {
+      result += num;
+    }
+  }
+  return result
+};
+console.log(romanToInt("IV")) // 4
+console.log(romanToInt("LVIII")) // 50 5 3
+console.log(romanToInt("MCMXCIV")) // 1000 900 9 4
+console.log(romanToInt("CMXCIX")) // 900 99 9
+console.log(romanToInt("MDCCCLXXXIV")) // 1000 500 300 50 30 4
