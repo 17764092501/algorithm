@@ -61,3 +61,56 @@ var twoSum = function (nums, target) {
   }
 };
 console.log(twoSum([5, 5, 4, 7, 6, 4, 3, 2, 5], 10))
+
+/**
+ * 最长公共长度
+ * @param {string[]} strs
+ * @return {string}
+ */
+var longestCommonPrefix = function (strs) {
+  // 取最长可避免字符串长度为0或1取不到长度
+  let longestLen = strs.reduce(function (a, b) {
+    return a.length > b.length ? a.length : b.length
+  }, "");
+  let str = "";
+  for (let index = 0; index < longestLen; index++) {
+    // 取出同位的字符
+    let arr = strs.map(ele => ele[index]);
+    // 比较第一个是否和其他全都
+    if (!arr.every(ele => ele === arr[0])) {
+      break;
+    }
+    str += arr[0];
+  }
+  return str;
+};
+console.log(longestCommonPrefix(["flower", "flow", "flight111"]));
+
+/**
+ * 递归获取随机数组
+ * 
+ * @param {Array} [arr = []] 源数组
+ * @param {Number} [len = 0] 数组长度
+ * @param {Number} [startRangeNum = 0] 起始范围
+ * @param {Number} [endRangeNum = 0] 结束范围
+ * 
+ * @return {Array} 返回新数组
+ */
+var getRandomArr = function (arr = [], len = 0, startRangeNum = 0, endRangeNum = 0) {
+  let array = [].concat.apply([], arr); // 数组
+  let obj = {}; // hash 储存出现数字
+  // 递归函数
+  let pushFn = function () {
+    if (array.length < len) {
+      let num = parseInt(Math.random() * (endRangeNum - startRangeNum) + startRangeNum);
+      if (!obj[num]) {
+        array.push(num);
+      }
+      return pushFn();
+    } else {
+      return array;
+    }
+  }
+  return pushFn();
+}
+console.log(getRandomArr([1,2,3,4,5],10,1,10));
