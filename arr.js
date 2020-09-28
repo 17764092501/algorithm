@@ -113,4 +113,30 @@ var getRandomArr = function (arr = [], len = 0, startRangeNum = 0, endRangeNum =
   }
   return pushFn();
 }
-console.log(getRandomArr([1,2,3,4,5],10,1,10));
+console.log(getRandomArr([1, 2, 3, 4, 5], 10, 1, 10));
+
+/**
+ * 合并有序链表
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode} 
+ */
+var ListNode = function (val, next) {
+  this.val = (val === undefined ? 0 : val)
+  this.next = (next === undefined ? null : next)
+}
+
+var mergeTwoLists = function (l1, l2) {
+  if (l1 === null) {
+    return l2;
+  } else if (l2 === null) {
+    return l1;
+  } else if (l1.val < l2.val) {
+    l1.next = mergeTwoLists(l1.next, l2);
+    return l1;
+  } else {
+    l2.next = mergeTwoLists(l1, l2.next);
+    return l2;
+  }
+};
+console.log(mergeTwoLists(new ListNode(1,new ListNode(2,null)),new ListNode(2,new ListNode(3,null))))
