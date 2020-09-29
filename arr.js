@@ -22,7 +22,7 @@ var twoSum = (nums, target) => {
 console.log(twoSum([5, 5, 4, 7, 6, 4, 3, 2, 5], 10))
 
 /**
- * 两数之和(推荐)
+ * 递归两数之和(推荐)
  * @param {number[]} nums
  * @param {number} target
  * @return {number[]} 从左到右两数之和的下标
@@ -87,19 +87,17 @@ var longestCommonPrefix = function (strs) {
 console.log(longestCommonPrefix(["flower", "flow", "flight111"]));
 
 /**
- * 递归获取随机数组
- * 
+ * 获取随机不重复数组
  * @param {Array} [arr = []] 源数组
  * @param {Number} [len = 0] 数组长度
  * @param {Number} [startRangeNum = 0] 起始范围
  * @param {Number} [endRangeNum = 0] 结束范围
- * 
  * @return {Array} 返回新数组
  */
 var getRandomArr = function (arr = [], len = 0, startRangeNum = 0, endRangeNum = 0) {
   let array = [].concat.apply([], arr); // 数组
   let obj = {}; // hash 储存出现数字
-  // 递归函数
+  // 迭代函数
   let pushFn = function () {
     if (array.length < len) {
       let num = parseInt(Math.random() * (endRangeNum - startRangeNum) + startRangeNum);
@@ -140,3 +138,20 @@ var mergeTwoLists = function (l1, l2) {
   }
 };
 console.log(mergeTwoLists(new ListNode(1,new ListNode(2,null)),new ListNode(2,new ListNode(3,null))))
+
+/**
+ * 原地算法去重(用输出覆盖输入)
+ * @param {number[]} nums
+ * @return {number}
+ */
+var removeDuplicates = function(nums, j = 0) {
+  nums.forEach((_,i) => {
+    // i为快指针(跳过重复项) j为慢指针(数组length)
+    if(i !== 0 && nums[i] !== nums[j]){
+      j++;
+      nums[j] = nums[i];
+    }
+  });
+  return j + 1;
+};
+console.log(removeDuplicates([0,0,1,1,1,2,2,3,3,4]))
