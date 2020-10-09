@@ -113,17 +113,17 @@ var getRandomArr = function (arr = [], len = 0, startRangeNum = 0, endRangeNum =
 }
 console.log(getRandomArr([1, 2, 3, 4, 5], 10, 1, 10));
 
+var ListNode = function (val, next) {
+  this.val = (val === undefined ? 0 : val)
+  this.next = (next === undefined ? null : next)
+}
+
 /**
  * 合并有序链表
  * @param {ListNode} l1
  * @param {ListNode} l2
  * @return {ListNode} 
  */
-var ListNode = function (val, next) {
-  this.val = (val === undefined ? 0 : val)
-  this.next = (next === undefined ? null : next)
-}
-
 var mergeTwoLists = function (l1, l2) {
   if (l1 === null) {
     return l2;
@@ -137,21 +137,118 @@ var mergeTwoLists = function (l1, l2) {
     return l2;
   }
 };
-console.log(mergeTwoLists(new ListNode(1,new ListNode(2,null)),new ListNode(2,new ListNode(3,null))))
+console.log(mergeTwoLists(new ListNode(1, new ListNode(2, null)), new ListNode(2, new ListNode(3, null))))
 
 /**
- * 原地算法去重(用输出覆盖输入)
+ * 已排序数组原地算法去重(用输出覆盖输入)
  * @param {number[]} nums
  * @return {number}
  */
-var removeDuplicates = function(nums, j = 0) {
-  nums.forEach((_,i) => {
+var removeDuplicates = function (nums, j = 0) {
+  nums.forEach((_, i) => {
     // i为快指针(跳过重复项) j为慢指针(数组length)
-    if(i !== 0 && nums[i] !== nums[j]){
+    if (i !== 0 && nums[i] !== nums[j]) {
       j++;
       nums[j] = nums[i];
     }
   });
   return j + 1;
 };
-console.log(removeDuplicates([0,0,1,1,1,2,2,3,3,4]))
+console.log(removeDuplicates([0, 0, 1, 1, 1, 2, 2, 3, 3, 4]))
+
+/**
+ * 原地算法删除(用输出覆盖输入)
+ * @param {number[]} nums
+ * @param {number} val
+ * @return {number}
+ */
+var removeElement = function (nums, val, j = 0) {
+  nums.forEach((_, i) => {
+    // i为快指针(判断相等项) j为慢指针(数组length)
+    if (nums[i] !== val) {
+      nums[j] = nums[i];
+      j++;
+    }
+  });
+  return j;
+};
+console.log(removeElement([0, 0, 1, 1, 1, 2, 2, 3, 3, 4], 1))
+
+/**
+ * 实现indexOf(双指针)
+ * @param {string} haystack
+ * @param {string} needle
+ * @return {number}
+ */
+var strStr = function (haystack, needle, i = 0) {
+  if (needle.length > haystack.length) {
+    return -1;
+  }
+  for (let index = 0; index < haystack.length; index++) {
+    const element = haystack[index];
+    if (element == needle[i]) {
+      if (i < needle.length - 1) {
+        i++;
+        continue;
+      }
+      // 完全匹配
+      return index - i;
+    } else {
+      // 部分匹配 从最开始匹配的下一位再重新匹配
+      if (i > 0) {
+        index -= i || 1;
+        i = 0;
+      }
+    }
+  }
+  return needle === "" ? 0 : -1;
+};
+console.log(strStr("mississippi", "pi"))
+
+/**
+ * 搜索插入位置
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var searchInsert = function (nums, target, i = 0) {
+  for (let index = 0; index < nums.length; index++) {
+    const element = nums[index];
+    if (target == element) {
+      return index;
+    }
+    if (target > element) {
+      i++;
+    }
+  }
+  nums.splice(0, i, target);
+  return i;
+};
+console.log(searchInsert([1, 3, 5, 6], 5))
+
+/**
+ * 搜索插入位置(二分法)
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var searchInsert = function (nums, target) {
+  let low = 0;
+  let high = nums.length - 1;
+  while (low <= high) {
+    // 取中间index
+    let mid = Math.ceil((high + low) / 2);
+    if (target == nums[mid]) {
+      return mid;
+    } else if (target > nums[mid]) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+  // 未找到目标 插入元素
+  nums.splice(0, low, target);
+  return low;
+};
+console.log(searchInsert([1, 3, 5, 6], 2))
+console.log(searchInsert([1, 3, 5, 6], 25))
