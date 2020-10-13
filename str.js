@@ -25,9 +25,51 @@ var isValid = function (s) {
   }
   return stack.length === 0;
 };
-// console.log(isValid("()"))
-// console.log(isValid("({})"))
-// console.log(isValid("(){}[]"))
-// console.log(isValid("(())"))
-// console.log(isValid("[({(())}[()])]"))
-// console.log(isValid("{[}]"))
+console.log(isValid("()"))
+console.log(isValid("({})"))
+console.log(isValid("(){}[]"))
+console.log(isValid("(())"))
+console.log(isValid("[({(())}[()])]"))
+console.log(isValid("{[}]"))
+
+/**
+ * 外观整数序列(正则)
+ * @param {number} n
+ * @return {string}
+ */
+var countAndSay = function (n) {
+  let prev = '1'
+  for (let i = 1; i < n; i++) {
+    // 反向引用 第一个匹配项 {0,}数量 
+    prev = prev.replace(/(\d)\1*/g, item => `${item.length}${item[0]}`)
+  }
+  return prev;
+};
+console.log(countAndSay(6))
+
+/**
+ * 外观整数序列(循环)
+ * @param {number} n
+ * @return {string}
+ */
+var countAndSay = function (n) {
+  let prev = curr = "1";
+  for (let index = 1; index < n; index++) {
+    // 双指针
+    let left = right = 0;
+    // 将现在赋值给上一个
+    prev = curr;
+    curr = "";
+    while (right < prev.length) {
+      // 求出连续相等的index
+      while (prev[left] == prev[right] && right < prev.length) {
+        right++;
+      }
+      // 累加
+      curr += `${right - left}${prev[left]}`;
+      left = right;
+    }
+  }
+  return curr;
+}
+console.log(countAndSay(6))

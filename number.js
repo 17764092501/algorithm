@@ -29,9 +29,9 @@ var isPalindrome = function (x) {
   let firstNum = 0;
   while (firstNum <= lastNum) {
     // 比较最后一位是否不等于第一位
-    let first = parseInt(x / Math.pow(10,lastNum)) % 10;
-    let last = parseInt(x / Math.pow(10,firstNum)) % 10;
-    if(first != last){
+    let first = parseInt(x / Math.pow(10, lastNum)) % 10;
+    let last = parseInt(x / Math.pow(10, firstNum)) % 10;
+    if (first != last) {
       return false;
     }
     firstNum++;
@@ -46,7 +46,7 @@ console.log(isPalindrome(123321123321))
  * @param {string} s
  * @return {number}
  */
-var romanToInt = function(s) {
+var romanToInt = function (s) {
   // 对应规则
   let hashNum = {
     I: 1,
@@ -60,12 +60,12 @@ var romanToInt = function(s) {
   let result = 0;
   for (let index = 0; index < s.length; index++) {
     const num = hashNum[s[index]];
-    const nextNum = hashNum[s[index+1]];
-    if(!num){
+    const nextNum = hashNum[s[index + 1]];
+    if (!num) {
       return "输入字符串不合规";
     }
     // 下一个数大于当前数 result减去当前数
-    if(nextNum > num){
+    if (nextNum > num) {
       result -= num;
     } else {
       result += num;
