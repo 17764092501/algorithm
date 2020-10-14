@@ -76,7 +76,7 @@ var longestCommonPrefix = function (strs) {
   for (let index = 0; index < longestLen; index++) {
     // 取出同位的字符
     let arr = strs.map(ele => ele[index]);
-    // 比较第一个是否和其他全都
+    // 比较第一个是否和其他全都相等
     if (!arr.every(ele => ele === arr[0])) {
       break;
     }
@@ -252,3 +252,41 @@ var searchInsert = function (nums, target) {
 };
 console.log(searchInsert([1, 3, 5, 6], 2))
 console.log(searchInsert([1, 3, 5, 6], 25))
+
+/**
+ * 连续最大和(动态规划)
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function (nums) {
+  let prev = 0, max = nums[0];
+  nums.forEach((ele) => {
+    prev = Math.max(prev + ele, ele);
+    max = Math.max(prev, max);
+  })
+  return max;
+};
+console.log(maxSubArray([1, 2, -4, 7, -2]), "maxSubArray")
+
+/**
+ * 加一
+ * @param {number[]} digits
+ * @return {number[]}
+ */
+var plusOne = function (digits, index = digits.length - 1) {
+  if (digits[index] == 9) {
+    digits[index] = 0;
+    if (index == 0) {
+      digits.unshift(1);
+      return digits;
+    }
+    return plusOne(digits, --index);
+  } else {
+    digits[index] += 1;
+    return digits;
+  }
+};
+console.log(plusOne([4, 3, 2, 1]))
+console.log(plusOne([9, 9, 9, 9]))
+console.log(plusOne([0]))
+console.log(plusOne([9]))

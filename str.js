@@ -73,3 +73,34 @@ var countAndSay = function (n) {
   return curr;
 }
 console.log(countAndSay(6))
+
+/**
+ * 最后一个单词长度(正则)
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLastWord = function(s) {
+  let arr = s.match(/\w+/g);
+  return arr!=null&&arr.length>0 ? arr[arr.length-1].length : 0;
+};
+console.log(lengthOfLastWord("Hello World"))
+
+/**
+ * 最后一个单词长度
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLastWord = function(s) {
+  let count = 0;
+  for (let index = s.length - 1; index >= 0; index--) {
+    if(s[index]!=" "){
+      count++;
+    } else {
+      if(count>0){
+        return count;
+      }
+    }
+  }
+  return count;
+};
+console.log(lengthOfLastWord("Hello World"))
