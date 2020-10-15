@@ -79,9 +79,9 @@ console.log(countAndSay(6))
  * @param {string} s
  * @return {number}
  */
-var lengthOfLastWord = function(s) {
+var lengthOfLastWord = function (s) {
   let arr = s.match(/\w+/g);
-  return arr!=null&&arr.length>0 ? arr[arr.length-1].length : 0;
+  return arr != null && arr.length > 0 ? arr[arr.length - 1].length : 0;
 };
 console.log(lengthOfLastWord("Hello World"))
 
@@ -90,13 +90,13 @@ console.log(lengthOfLastWord("Hello World"))
  * @param {string} s
  * @return {number}
  */
-var lengthOfLastWord = function(s) {
+var lengthOfLastWord = function (s) {
   let count = 0;
   for (let index = s.length - 1; index >= 0; index--) {
-    if(s[index]!=" "){
+    if (s[index] != " ") {
       count++;
     } else {
-      if(count>0){
+      if (count > 0) {
         return count;
       }
     }
