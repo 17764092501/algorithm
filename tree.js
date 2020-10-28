@@ -1,25 +1,279 @@
+// N叉树 下方是个三叉树 
+/* 
+         R
+      /  |  \
+     A   B   C
+   /   \     |
+  D     E    F
+           / | \
+          G  H  I
+*/
+// 一种表示方法(数据源,子结点数组) 双亲表示法
+class NTreeNode1 {
+  constructor(value, ...args) {
+    // 子结点数组
+    this.childrens = args
+    // 数据
+    this.value = value
+  }
+
+  // 赋值
+  setValue(value) {
+    this.value = value
+  }
+
+  // 从左到右插入结点
+  pushTreeNode(treeNode, number) {
+    if (number == null) {
+      this.childrens.push(treeNode)
+    } else {
+      this.childrens[number] = treeNode
+    }
+  }
+
+  // 从右到左插入结点
+  unshiftTreeNode(treeNode, number) {
+    if (number == null) {
+      this.childrens.unshift(treeNode)
+    } else {
+      this.childrens[number] = treeNode
+    }
+  }
+
+  // 清除结点
+  clear() {
+    this.childrens = []
+    this.value = null
+  }
+}
+
+treeR = new NTreeNode1("R")
+treeA = new NTreeNode1("A")
+treeB = new NTreeNode1("B")
+treeC = new NTreeNode1("C")
+treeD = new NTreeNode1("D")
+treeE = new NTreeNode1("E")
+treeF = new NTreeNode1("F")
+treeG = new NTreeNode1("G")
+treeH = new NTreeNode1("H")
+treeI = new NTreeNode1("I")
+
+treeR.pushTreeNode(treeA)
+treeR.pushTreeNode(treeB)
+treeR.pushTreeNode(treeC)
+treeA.pushTreeNode(treeD)
+treeA.pushTreeNode(treeE)
+treeC.pushTreeNode(treeF)
+treeF.pushTreeNode(treeG)
+treeF.pushTreeNode(treeH)
+treeF.pushTreeNode(treeI)
+
+/* 
+{
+  "childrens": [{
+    "childrens": [{
+      "childrens": [],
+      "value": "D"
+    }, {
+      "childrens": [],
+      "value": "E"
+    }],
+    "value": "A"
+  }, {
+    "childrens": [],
+    "value": "B"
+  }, {
+    "childrens": [{
+      "childrens": [{
+        "childrens": [],
+        "value": "G"
+      }, {
+        "childrens": [],
+        "value": "H"
+      }, {
+        "childrens": [],
+        "value": "I"
+      }],
+      "value": "F"
+    }],
+    "value": "C"
+  }],
+  "value": "R"
+}
+*/
+console.log(JSON.stringify(treeR))
+/* 
+         R
+      /  |  \
+     A   B   C
+   /   \     |
+  D     E    F
+           / | \
+          G  H  I
+*/
+// 树转换为双亲数组
+function parentsArrayStorage(tree, array = [], index = -1) {
+  let arrayIndex = []
+  if (array.length == 0) {
+    array.push([tree.value, index])
+    index++
+  }
+  tree.childrens.forEach(ele => {
+    array.push([ele.value, index])
+    arrayIndex.push(array.length - 1)
+  })
+  tree.childrens.forEach((ele, index) => {
+    parentsArrayStorage(ele, array, arrayIndex[index])
+  })
+  return array
+}
+/* 
+[
+  [ 'R', -1 ], [ 'A', 0 ],
+  [ 'B', 0 ],  [ 'C', 0 ],
+  [ 'D', 1 ],  [ 'E', 1 ],
+  [ 'F', 3 ],  [ 'G', 6 ],
+  [ 'H', 6 ],  [ 'I', 6 ]
+]
+*/
+console.log(parentsArrayStorage(treeR))
+// 双亲数组转换为树
+function createN1Tree(array) {
+  let treeArray = array.map(ele => new NTreeNode1(ele[0]))
+  for (let index = array.length - 1; index >= 0; index--) {
+    const element = array[index]
+    if (element[1] != -1) {
+      treeArray[element[1]].unshiftTreeNode(treeArray[index])
+      treeArray.pop()
+    }
+  }
+  return treeArray[0]
+}
+/* 
+{
+  "childrens": [{
+    "childrens": [{
+      "childrens": [],
+      "value": "D"
+    }, {
+      "childrens": [],
+      "value": "E"
+    }],
+    "value": "A"
+  }, {
+    "childrens": [],
+    "value": "B"
+  }, {
+    "childrens": [{
+      "childrens": [{
+        "childrens": [],
+        "value": "G"
+      }, {
+        "childrens": [],
+        "value": "H"
+      }, {
+        "childrens": [],
+        "value": "I"
+      }],
+      "value": "F"
+    }],
+    "value": "C"
+  }],
+  "value": "R"
+}
+*/
+console.log(JSON.stringify(createN1Tree(parentsArrayStorage(treeR))))
+
+/* 
+         R
+      /  |  \
+     A   B   C
+   /   \     |
+  D     E    F
+           / | \
+          G  H  I
+*/
+// 另一种表示方法(孩子结点,数据源,兄弟结点) 孩子兄弟表示法
+class NTreeNode2 {
+  constructor(value,childNode,brotherNode) {
+    // 子结点
+    this.childNode = childNode || null
+    // 兄弟结点
+    this.brotherNode = brotherNode || null
+    // 数据
+    this.value = value
+  }
+
+  // 赋值
+  setValue(value) {
+    this.value = value
+  }
+
+  // 设置兄弟结点
+  setBrotherNode(treeNode) {
+    this.brotherNode = treeNode
+  }
+
+  // 设置孩子结点
+  setChildNode(treeNode) {
+    this.childNode = treeNode
+  }
+
+  // 清除结点
+  clear() {
+    this.childNode = null
+    this.brotherNode = null
+    this.value = null
+  }
+}
+
+treeR = new NTreeNode2("R")
+treeA = new NTreeNode2("A")
+treeB = new NTreeNode2("B")
+treeC = new NTreeNode2("C")
+treeD = new NTreeNode2("D")
+treeE = new NTreeNode2("E")
+treeF = new NTreeNode2("F")
+treeG = new NTreeNode2("G")
+treeH = new NTreeNode2("H")
+treeI = new NTreeNode2("I")
+
+treeR.setChildNode(treeA)
+treeA.setBrotherNode(treeB)
+treeB.setBrotherNode(treeC)
+treeA.setChildNode(treeD)
+treeD.setBrotherNode(treeE)
+treeC.setChildNode(treeF)
+treeF.setChildNode(treeG)
+treeG.setBrotherNode(treeH)
+treeH.setBrotherNode(treeI)
+console.log(treeR)
+
+// 顺序二叉树
+// 适合存储完全二叉树 非完全二叉树会浪费存储空间
+
 // 链式二叉树
 class TreeNode {
   constructor(value, left, right) {
-    // 左结点(儿子)
+    // 左子结点
     this.leftTreeNode = left || null
-    // 右结点(儿子)
+    // 右子结点
     this.rightTreeNode = right || null
     // 数据
     this.value = value
   }
 
-  // 复制
+  // 赋值
   setValue(value) {
     this.value = value
   }
 
-  // 左结点
-  setLefTreeNode(left) {
+  // 左子结点
+  setLeftTreeNode(left) {
     this.leftTreeNode = left || null
   }
 
-  // 右结点
+  // 右子结点
   setRightTreeNode(right) {
     this.rightTreeNode = right || null
   }
@@ -32,22 +286,22 @@ class TreeNode {
   }
 }
 
-let treeA = new TreeNode("A")
-let treeB = new TreeNode("B")
-let treeC = new TreeNode("C")
-let treeD = new TreeNode("D")
-let treeE = new TreeNode("E")
-let treeF = new TreeNode("F")
-let treeG = new TreeNode("G")
+treeA = new TreeNode("A")
+treeB = new TreeNode("B")
+treeC = new TreeNode("C")
+treeD = new TreeNode("D")
+treeE = new TreeNode("E")
+treeF = new TreeNode("F")
+treeG = new TreeNode("G")
 
-treeA.setLefTreeNode(treeB)
+treeA.setLeftTreeNode(treeB)
 treeA.setRightTreeNode(treeC)
-treeB.setLefTreeNode(treeD)
+treeB.setLeftTreeNode(treeD)
 treeB.setRightTreeNode(treeE)
-treeC.setLefTreeNode(treeF)
+treeC.setLeftTreeNode(treeF)
 treeC.setRightTreeNode(treeG)
 
-// 前序遍历
+// 前序
 function preorderTraversal(root) {
   if (root != null) {
     // 这里操作结点
@@ -153,35 +407,33 @@ console.log(levelTraversal(treeA).join(" -> "))
  * @param {Array} array 源数组
  * @param {Number} index 数组索引
  * @param {Number} value 比较值
- * @param {Object} rootTree 节点 
- * @param {Boolean|undefined} noRootFlag false是根节点 true不是根节点
+ * @param {Object} rootTree 结点 
+ * @param {Boolean|undefined} noRootFlag false是根结点 true不是根结点
  */
 function createBST(array, index, value = array[0], rootTree = new TreeNode(array[0]), noRootFlag) {
   // 数组循环退出
   if (index > array.length - 1) {
     return rootTree
   }
-  if (index > 0) {
-    // 生成结点
-    let tree = new TreeNode(array[index])
-    if (array[index] > value) {
-      // 大于value的放在结点右边
-      if (rootTree.rightTreeNode) {
-        // 当前结点有右结点,插入结点再与右结点比较
-        createBST(array, index, rootTree.rightTreeNode.value, rootTree.rightTreeNode, true)
-      } else {
-        // 当前结点没有右结点,插入结点设置为右结点
-        rootTree.setRightTreeNode(tree)
-      }
+  // 生成结点
+  let tree = new TreeNode(array[index])
+  if (array[index] > value) {
+    // 大于value的放在结点右边
+    if (rootTree.rightTreeNode) {
+      // 当前结点有右结点,插入结点再与右结点比较
+      createBST(array, index, rootTree.rightTreeNode.value, rootTree.rightTreeNode, true)
     } else {
-      // 小于value的放在结点左边
-      if (rootTree.leftTreeNode) {
-        // 当前结点有左结点,插入结点再与左结点比较
-        createBST(array, index, rootTree.leftTreeNode.value, rootTree.leftTreeNode, true)
-      } else {
-        // 当前结点没有左结点,插入结点设置为左结点
-        rootTree.setLefTreeNode(tree)
-      }
+      // 当前结点没有右结点,插入结点设置为右结点
+      rootTree.setRightTreeNode(tree)
+    }
+  } else {
+    // 小于value的放在结点左边
+    if (rootTree.leftTreeNode) {
+      // 当前结点有左结点,插入结点再与左结点比较
+      createBST(array, index, rootTree.leftTreeNode.value, rootTree.leftTreeNode, true)
+    } else {
+      // 当前结点没有左结点,插入结点设置为左结点
+      rootTree.setLeftTreeNode(tree)
     }
   }
   // 是否循环
@@ -204,6 +456,7 @@ function createBST(array, index, value = array[0], rootTree = new TreeNode(array
 */
 array = [5, 2, 1, 4, 3]
 rootTree = createBST(array, 0, array[0])
+console.log(rootTree)
 console.log(levelTraversal(rootTree))
 
 /* 
@@ -410,7 +663,7 @@ function deleteBST(root, value, tree = root, parent = null) {
     // 找到这个结点
   } else {
     // 判断是连接左子树还是右字树 true 右子树 false 左子树
-    let positionFlag = parent ? parent.value : 0 < value;
+    let positionFlag = parent ? parent.value : 0 < value
     // 只有左结点
     if (tree.leftTreeNode && !tree.rightTreeNode) {
       if (positionFlag) {
@@ -434,7 +687,7 @@ function deleteBST(root, value, tree = root, parent = null) {
       }
       // 左右都有
     } else {
-      let tempTree,parent,value;
+      let tempTree, parent, value
       if (searchHeightBST(tree.leftTreeNode) > searchHeightBST(tree.rightTreeNode)) {
         // 该结点的左子树深度大于右子树深度 将左子树的最右的结点删除 将被删除的结点值赋值该结点
         tempTree = tree.leftTreeNode
