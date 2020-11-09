@@ -111,8 +111,8 @@ console.log(JSON.stringify(treeR))
            / | \
           G  H  I
 */
-// 树转换为双亲数组
-function parentsArrayStorage(tree, array = [], index = -1) {
+// N叉树(第一种表示)树转换为双亲数组
+function parentsArrayStorage1(tree, array = [], index = -1) {
   let arrayIndex = []
   if (array.length == 0) {
     array.push([tree.value, index])
@@ -123,7 +123,7 @@ function parentsArrayStorage(tree, array = [], index = -1) {
     arrayIndex.push(array.length - 1)
   })
   tree.childrens.forEach((ele, index) => {
-    parentsArrayStorage(ele, array, arrayIndex[index])
+    parentsArrayStorage1(ele, array, arrayIndex[index])
   })
   return array
 }
@@ -136,8 +136,8 @@ function parentsArrayStorage(tree, array = [], index = -1) {
   [ 'H', 6 ],  [ 'I', 6 ]
 ]
 */
-console.log(parentsArrayStorage(treeR))
-// 双亲数组转换为树
+console.log(parentsArrayStorage1(treeR))
+// 双亲数组转换为N叉树(第一种表示)
 function createN1Tree(array) {
   let treeArray = array.map(ele => new NTreeNode1(ele[0]))
   for (let index = array.length - 1; index >= 0; index--) {
@@ -182,7 +182,7 @@ function createN1Tree(array) {
   "value": "R"
 }
 */
-console.log(JSON.stringify(createN1Tree(parentsArrayStorage(treeR))))
+console.log(JSON.stringify(createN1Tree(parentsArrayStorage1(treeR))))
 
 /* 
          R
@@ -195,7 +195,7 @@ console.log(JSON.stringify(createN1Tree(parentsArrayStorage(treeR))))
 */
 // 另一种表示方法(孩子结点,数据源,兄弟结点) 孩子兄弟表示法
 class NTreeNode2 {
-  constructor(value,childNode,brotherNode) {
+  constructor(value, childNode, brotherNode) {
     // 子结点
     this.childNode = childNode || null
     // 兄弟结点
@@ -247,7 +247,93 @@ treeC.setChildNode(treeF)
 treeF.setChildNode(treeG)
 treeG.setBrotherNode(treeH)
 treeH.setBrotherNode(treeI)
-console.log(treeR)
+/* 
+         R
+      /  |  \
+     A   B   C
+   /   \     |
+  D     E    F
+           / | \
+          G  H  I
+*/
+console.log(JSON.stringify(treeR))
+
+// N叉树(第二种表示)树转换为双亲数组
+function parentsArrayStorage2(tree, array = [], index = -1) {
+  let tempTree = tree
+  if (index == -1) {
+    array.push([tree.value, index])
+  }
+  let len = array.length
+  let lensubtract1 = array.length - 1
+  let lenAdd1 = array.length + 1
+  if (tempTree.brotherNode) {
+    while (tempTree.brotherNode) {
+      array.push([tempTree.brotherNode.value, index])
+      tempTree = tempTree.brotherNode
+      if (!tempTree.brotherNode) {
+        break
+      }
+    }
+    while (tempTree.brotherNode) {
+      if (tempTree.childNode) {
+        array.push([tempTree.childNode.value, lenAdd1])
+        parentsArrayStorage2(tempTree.childNode, array, lenAdd1)
+      }
+      tempTree = tempTree.brotherNode
+      if (!tempTree.brotherNode) {
+        break;
+      }
+    }
+    if (tree.childNode) {
+      array.push([tree.childNode.value, lensubtract1])
+      parentsArrayStorage2(tree.childNode, array, lensubtract1)
+    }
+    if (tempTree.childNode) {
+      array.push([tempTree.childNode.value, len])
+      parentsArrayStorage2(tempTree.childNode, array, len)
+    }
+  } else {
+    if (tree.childNode) {
+      array.push([tree.childNode.value, lensubtract1])
+      parentsArrayStorage2(tree.childNode, array, lensubtract1)
+    }
+  }
+  return array;
+}
+/* 
+[
+  [ 'R', -1 ], [ 'A', 0 ],
+  [ 'B', 0 ],  [ 'C', 0 ],
+  [ 'D', 1 ],  [ 'E', 1 ],
+  [ 'F', 3 ],  [ 'G', 6 ],
+  [ 'H', 6 ],  [ 'I', 6 ]
+]
+*/
+console.log(parentsArrayStorage2(treeR))
+// 双亲数组转换为N叉树(第二种表示)
+function createN2Tree(array) {
+  let treeArray = array.map(ele => new NTreeNode2(ele[0]))
+  for (let index = array.length - 1; index >= 0; index--) {
+    const element = array[index]
+    if (element[1] != -1) {
+      if (array[index - 1][1] == element[1]) {
+        treeArray[index - 1].setBrotherNode(treeArray[index])
+      } else {
+        treeArray[element[1]].setChildNode(treeArray[index])
+      }
+      treeArray.pop()
+    }
+  }
+  return treeArray[0]
+}
+console.log(JSON.stringify(createN2Tree([
+  ['R', -1], ['A', 0],
+  ['B', 0], ['C', 0],
+  ['D', 1], ['E', 1],
+  ['F', 3], ['G', 6],
+  ['H', 6], ['I', 6]
+])))
 
 // 顺序二叉树
 // 适合存储完全二叉树 非完全二叉树会浪费存储空间
@@ -401,7 +487,73 @@ function levelTraversal(root) {
 console.log("层次广度优先遍历")
 console.log(levelTraversal(treeA).join(" -> "))
 
-//二分查找树
+/* 
+类型: 哈夫曼树(最优二叉树)
+解释: 当用n个结点(都做叶子结点且都有各自的权值)试图构建一棵树时,如果构建的这棵树的带权路径长度最小,称这棵树为"最优二叉树",有时也叫"赫夫曼树"或者"哈夫曼树"
+*/
+/**
+ * 生成哈夫曼树
+ * @param {Array} array 源数组
+ */
+function createHuffManTree(array,tree = null) {
+  if(tree==null){
+    array = array.sort((a, b) => a - b).map(ele => new TreeNode(ele))
+  }
+  if (array.length == 1) {
+    return tree
+  }
+  if (array.length > 1) {
+    let sum = array[0].value + array[1].value
+    let tempIndex = 0
+    while (sum > array[tempIndex].value) {
+      tempIndex++
+      if(tempIndex > array.length-1){
+        break
+      }
+    }
+    if(array.length>1){
+      array.splice(tempIndex, 0, new TreeNode(sum,array[0],array[1]))
+      array.shift()
+      array.shift()
+      tree = array[0]
+    }
+  }
+  return createHuffManTree(array,tree)
+}
+// 测试生成哈夫曼树
+/* 
+[5, 13, 40, 30, 10]
+    98
+   /  \
+  40  58
+     /  \
+    28   30
+   /  \
+  13   15
+      /  \
+     5   10
+*/
+console.log(createHuffManTree([5, 13, 40, 30, 10]))
+console.log(levelTraversal(createHuffManTree([5, 13, 40, 30, 10])))
+// 测试生成哈夫曼树
+/* 
+[1, 2, 3, 3, 4, 5]
+        18
+      /    \
+    7       11
+   /  \    /  \
+  3    4  5    6 
+              / \
+             3   3
+            / \
+           1   2
+*/
+console.log(createHuffManTree([1, 2, 3, 3, 4, 5]))
+console.log(levelTraversal(createHuffManTree([1, 2, 3, 3, 4, 5])))
+/* 
+类型: 二叉查找树
+解释: 比结点值小的放在左边为左结点,反之放在右边为右结点
+*/
 /**
  * 生成二叉查找树
  * @param {Array} array 源数组
@@ -443,7 +595,7 @@ function createBST(array, index, value = array[0], rootTree = new TreeNode(array
   }
 }
 
-// 测试生成树
+// 测试生成二叉查找树
 /* 
 [5,2,1,4,3] 
       5
